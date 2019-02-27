@@ -1,0 +1,8 @@
+<resources>
+  <string name="app_name">Loginize</string>
+  <string name="login_msg">Welcome,</string>
+  <string name="login_sub_msg">Sign in to continue</string>
+  <string name="log_in">Log in</string>
+  <string name="sign_up_question">Don\'t have an account yet?</string>
+  <string name="sign_up">Sign Up!</string>
+</resources>
