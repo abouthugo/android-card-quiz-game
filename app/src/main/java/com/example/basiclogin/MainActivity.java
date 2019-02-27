@@ -1,5 +1,6 @@
 package com.example.basiclogin;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,24 +9,28 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-  Button login_btn;
-  Button signup_btn;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    login_btn = findViewById(R.id.login_btn);
-    signup_btn = findViewById(R.id.signup_btn);
-  }
 
-  // Signup-btn event handler
-  public void signUp(View view) {
-
+    configureButtons();
   }
 
 
-  // Login-btn event handler
-  public void login(View view) {
+  protected void configureButtons() {
+    Button login_btn = findViewById(R.id.login_btn);
+    Button signup_btn = findViewById(R.id.signup_btn);
+
+    login_btn.setOnClickListener((View v) -> {
+      startActivity(new Intent(MainActivity.this, Login.class));
+    });
+
+    signup_btn.setOnClickListener((View v) -> {
+      startActivity(new Intent(MainActivity.this, SignUp.class));
+    });
 
   }
+
 }
