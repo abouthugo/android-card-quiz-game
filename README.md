@@ -1,6 +1,6 @@
 # A basic login flow made with Android Studio
 
-##Demo
+## Demo
 
 ### Login
 ![Demo of login feature for this app](/visuals/login_demo.gif)
