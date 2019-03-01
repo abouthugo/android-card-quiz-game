@@ -50,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     return EMAIL_REGEX.matcher(username).matches();
   }
 
+  /**
+   * Checks if the password is at least 5 characters long
+   * @return
+   */
   protected boolean validPassword(){
     TextInputLayout passwdText = findViewById(R.id.password);
     String passwd = passwdText.getEditText().getText().toString();

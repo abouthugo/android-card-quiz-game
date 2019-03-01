@@ -32,7 +32,7 @@ public class SignUp extends AppCompatActivity {
    * @return
    */
   protected boolean validInputs(){
-    return validName() && validEmail() && validDate() && validPassword() ;
+    return validName() && validDate() && validEmail() && validPassword() ;
   }
 
   /**
