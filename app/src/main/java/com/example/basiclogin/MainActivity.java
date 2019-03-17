@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     login_btn.setOnClickListener((View v) -> {
       if(validEmail() && validPassword())
-        startActivity(new Intent(MainActivity.this, Login.class));
+        startActivity(new Intent(MainActivity.this, Rules.class));
     });
 
     signup_btn.setOnClickListener((View v) -> {

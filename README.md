@@ -11,7 +11,7 @@ Learning objectives:
 Requirements:
 - [x] welcome screen (splash screen)
 - [x] registration/login screen
-- [ ] Login takes the user to the game
+- [x] Login takes the user to the game
 - [ ] 5 questions
 - [ ] at least one multiple choice question
 - [ ] at least one question with multiple answers
