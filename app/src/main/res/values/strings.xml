@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name">Cool Login</string>
+  <string name="app_name">Quiztion</string>
   <string name="login_msg">Welcome</string>
   <string name="login_sub_msg">Sign in to continue</string>
   <string name="log_in">Log in</string>
