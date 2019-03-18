@@ -1,6 +1,8 @@
 package com.example.basiclogin;
 
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,14 +30,13 @@ public class Quiz extends AppCompatActivity {
   // Internal handlers
   private int qNum = 0;
   private int score = 0;
-  private String[] ans = new String [5];
+  private String[] ans = new String[5];
 
   // View stuff
   TextView questionNumber;
   TextView currentQuestion;
   ProgressBar progressBar;
   Button[] choices = new Button[3];
-
 
 
   @Override
@@ -48,8 +49,8 @@ public class Quiz extends AppCompatActivity {
     currentQuestion = findViewById(R.id.current_question);
     progressBar = findViewById(R.id.progressBar);
     choices[0] = findViewById(R.id.choice_1);
-    choices[1]  = findViewById(R.id.choice_2);
-    choices[2]  = findViewById(R.id.choice_3);
+    choices[1] = findViewById(R.id.choice_2);
+    choices[2] = findViewById(R.id.choice_3);
     setQuestion(qNum);
   }
 
@@ -72,6 +73,7 @@ public class Quiz extends AppCompatActivity {
 
   /**
    * Get a answer given its domain question and index
+   *
    * @param q index of the question for which the answers belongs to
    * @param a index of the answer trying to be accessed
    * @return a string which is the question trying to be retrieved
@@ -88,10 +90,11 @@ public class Quiz extends AppCompatActivity {
 
   /**
    * Get the answer for a given question
+   *
    * @param q index of the question
    * @return the answer for the index question
    */
-  public String correctAnswer(int q) {
+  public String getCorrectAnswer(int q) {
     if (q > 4 || q < 0) {
       return "error";
     }
@@ -100,16 +103,31 @@ public class Quiz extends AppCompatActivity {
 
   /**
    * Increases the current question and calls function to perform updates
+   *
    * @param v view object
    */
   public void nextQuestion(View v) {
-    this.qNum++;
-    resetBtnColors();
-    setQuestion(qNum);
+
+    AlertDialog.Builder builder = new Builder(this);
+    builder.setMessage("Is this your final choice?")
+        .setCancelable(false)
+        .setPositiveButton("Yes", (d, i) -> {
+          boolean correct = getCorrectAnswer(qNum).equals(ans[qNum]);
+          if (correct) {
+            score++;
+          }
+          this.qNum++;
+          resetBtnColors();
+          setQuestion(qNum);
+        })
+        .setNegativeButton("No", (d, i) -> d.cancel());
+    AlertDialog confirmation = builder.create();
+    confirmation.show();
   }
 
   /**
    * Performs updates in the view layer according to a given index
+   *
    * @param qNum the index of the question at hand
    */
   public void setQuestion(int qNum) {
@@ -118,13 +136,13 @@ public class Quiz extends AppCompatActivity {
       finish();
     } else {
       int n = qNum + 1;
-      int percentage = (qNum*100 / 5);
+      int percentage = (qNum * 100 / 5);
       String s = "Question: " + n;
       questionNumber.setText(s);
       progressBar.setProgress(percentage);
       currentQuestion.setText(getQuestion(qNum));
-      for(int i = 0; i < choices.length; i++){
-        choices[i].setText(getChoice(qNum, i+1));
+      for (int i = 0; i < choices.length; i++) {
+        choices[i].setText(getChoice(qNum, i + 1));
       }
     }
   }
@@ -135,13 +153,13 @@ public class Quiz extends AppCompatActivity {
     ans[this.qNum] = ref.getText().toString();
     resetBtnColors();
     ref.setBackgroundResource(R.drawable.white_fill_box);
-    ref.setTextColor( getResources().getColor(R.color.retro_blue) );
+    ref.setTextColor(getResources().getColor(R.color.retro_blue));
   }
 
-  public void resetBtnColors(){
-    for (Button btn : choices){
+  public void resetBtnColors() {
+    for (Button btn : choices) {
       btn.setBackgroundResource(R.drawable.white_outline_box);
-      btn.setTextColor( getResources().getColor(R.color.pure_white) );
+      btn.setTextColor(getResources().getColor(R.color.pure_white));
     }
   }
 }
