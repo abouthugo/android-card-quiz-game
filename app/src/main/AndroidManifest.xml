@@ -11,6 +11,8 @@
     android:supportsRtl="true"
     android:theme="@style/AppTheme"
     tools:ignore="GoogleAppIndexingWarning">
+    <activity android:name=".Quiz">
+    </activity>
     <activity android:name=".Rules">
     </activity>
     <activity

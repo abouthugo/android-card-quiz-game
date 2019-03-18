@@ -10,4 +10,5 @@
   <string name="rules_2">2. Before you submit an answer we ask you to confirm, you won\'t be able to return to the question later</string>
   <string name="rules_3">3. At the end of the game we show you the results</string>
   <string name="rules_start">Start the game!</string>
+  <string name="next_question">Next</string>
 </resources>
