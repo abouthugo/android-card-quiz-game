@@ -25,7 +25,7 @@ public class Quiz extends AppCompatActivity {
   };
 
   // Array of answers
-  private final int[] ANSWERS = {2, 1, 1, 2, 2};
+  private final int[] ANSWERS = {2, 1, 1, 2, 3};
 
   // Internal handlers
   private int qNum = 0;
@@ -35,6 +35,7 @@ public class Quiz extends AppCompatActivity {
   // View stuff
   TextView questionNumber;
   TextView currentQuestion;
+  TextView scoreViewer;
   ProgressBar progressBar;
   Button[] choices = new Button[3];
 
@@ -47,6 +48,7 @@ public class Quiz extends AppCompatActivity {
     // Set the references
     questionNumber = findViewById(R.id.question_number);
     currentQuestion = findViewById(R.id.current_question);
+    scoreViewer = findViewById(R.id.score);
     progressBar = findViewById(R.id.progressBar);
     choices[0] = findViewById(R.id.choice_1);
     choices[1] = findViewById(R.id.choice_2);
@@ -133,12 +135,29 @@ public class Quiz extends AppCompatActivity {
   public void setQuestion(int qNum) {
     if (qNum > 4) {
       // TODO: show results
-      finish();
+      Button exit = findViewById(R.id.confirm);
+      String score_text = "Score: " + score;
+      exit.setText(R.string.exit);
+
+      questionNumber.setText("");
+      scoreViewer.setVisibility(View.GONE);
+      progressBar.setProgress(100);
+      currentQuestion.setText(score_text);
+
+      for (Button btn :choices)
+        btn.setVisibility(View.GONE);
+
+      exit.setOnClickListener(v -> {
+        finish();
+      });
+
     } else {
       int n = qNum + 1;
       int percentage = (qNum * 100 / 5);
       String s = "Question: " + n;
+      String score_text = "Score: " + score;
       questionNumber.setText(s);
+      scoreViewer.setText(score_text);
       progressBar.setProgress(percentage);
       currentQuestion.setText(getQuestion(qNum));
       for (int i = 0; i < choices.length; i++) {
