@@ -17,7 +17,7 @@ public class Question {
   }
 
   // For a multi-answer question
-  public double calculateAnswer(String[] choices){
+  public int calculateAnswer(String[] choices){
     double score = 0;
     int max_hits = answerIndex.length;
     ArrayList<String> strs = new ArrayList<>();
@@ -32,7 +32,7 @@ public class Question {
       if(strs.indexOf(ans) >= 0)
         score += 1;
     }
-    return score/max_hits;
+    return (int)score/max_hits;
   }
 
   // For a single answer question
@@ -42,11 +42,23 @@ public class Question {
     return 0;
   }
 
+  /**
+   * Returns the question
+   * @return
+   */
   public String getQuestion() {
     return question;
   }
 
+  /**
+   * Returns array of choices for a given question
+   * @return
+   */
   public String[] getChoices() {
     return choices;
+  }
+
+  public int getType(){
+    return answerIndex.length;
   }
 }

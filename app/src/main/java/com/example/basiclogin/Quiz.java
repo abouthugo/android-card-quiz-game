@@ -1,36 +1,26 @@
 package com.example.basiclogin;
 
-import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AlertDialog.Builder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Quiz extends AppCompatActivity {
 
-  // All sub-indexes [x][0] are questions, [x][y] where y > 0, are answers
-  private final String[][] QUESTIONS = {
-      {"What is the color of the sky?", "Yellow", "Transparent", "Blue"},
-      {"How old is Sponge Bob?", "28", "32", "5"},
-      {"Who is Satoshi Nakamoto?", "Creator of Bitcoin", "No one knows",
-          "Someone who is really smart"},
-      {"What is React?", "A JavaScript framework made by facebook",
-          "A JavaScript library made by facebook", "An app"},
-      {"What does the fox say?", "Woof", "Meow", "Ring-ding-ding-ding-dingeringeding"}
-  };
-
-  // Array of answers
-  private final int[] ANSWERS = {2, 1, 1, 2, 3};
+  private Helper help = new Helper();
+  protected Question[] questions = help.getQuestions(); // Holds the questions
 
   // Internal handlers
   private int qNum = 0;
   private int score = 0;
-  private String[] ans = new String[5];
+  private String[] ans = new String[5]; // user answers
 
   // View stuff
   TextView questionNumber;
@@ -38,6 +28,7 @@ public class Quiz extends AppCompatActivity {
   TextView scoreViewer;
   ProgressBar progressBar;
   Button[] choices = new Button[3];
+  Queue<Button> refs = new LinkedList<>(); // for multiple answers
 
 
   @Override
@@ -53,7 +44,7 @@ public class Quiz extends AppCompatActivity {
     choices[0] = findViewById(R.id.choice_1);
     choices[1] = findViewById(R.id.choice_2);
     choices[2] = findViewById(R.id.choice_3);
-    setQuestion(qNum);
+    setUp(qNum);
   }
 
   @Override
@@ -63,45 +54,6 @@ public class Quiz extends AppCompatActivity {
     progressBar.setProgress(0);
   }
 
-  /**
-   * Returns a question given its index
-   *
-   * @param index: the question number
-   * @return a string denoting the question requested
-   */
-  public String getQuestion(int index) {
-    return QUESTIONS[index][0];
-  }
-
-  /**
-   * Get a answer given its domain question and index
-   *
-   * @param q index of the question for which the answers belongs to
-   * @param a index of the answer trying to be accessed
-   * @return a string which is the question trying to be retrieved
-   */
-  public String getChoice(int q, int a) {
-    if (q > 4 || q < 0) {
-      return "Question does not exist";
-    }
-    if (a > 3 || a < 1) {
-      return "Answer does not exist";
-    }
-    return QUESTIONS[q][a];
-  }
-
-  /**
-   * Get the answer for a given question
-   *
-   * @param q index of the question
-   * @return the answer for the index question
-   */
-  public String getCorrectAnswer(int q) {
-    if (q > 4 || q < 0) {
-      return "error";
-    }
-    return QUESTIONS[q][ANSWERS[q]];
-  }
 
   /**
    * Increases the current question and calls function to perform updates
@@ -114,13 +66,15 @@ public class Quiz extends AppCompatActivity {
     builder.setMessage("Is this your final choice?")
         .setCancelable(false)
         .setPositiveButton("Yes", (d, i) -> {
-          boolean correct = getCorrectAnswer(qNum).equals(ans[qNum]);
-          if (correct) {
-            score++;
+          if (questions[qNum].getType() < 2) {
+            score += questions[qNum].calculateAnswer(ans[qNum]);
+          } else {
+            score += questions[qNum].calculateAnswer(ans[qNum].split("//"));
           }
           this.qNum++;
+          refs.clear(); // remove all refs for the next question
           resetBtnColors();
-          setQuestion(qNum);
+          setUp(qNum);
         })
         .setNegativeButton("No", (d, i) -> d.cancel());
     AlertDialog confirmation = builder.create();
@@ -132,7 +86,7 @@ public class Quiz extends AppCompatActivity {
    *
    * @param qNum the index of the question at hand
    */
-  public void setQuestion(int qNum) {
+  public void setUp(int qNum) {
     if (qNum > 4) {
       // TODO: show results
       Button exit = findViewById(R.id.confirm);
@@ -144,35 +98,65 @@ public class Quiz extends AppCompatActivity {
       progressBar.setProgress(100);
       currentQuestion.setText(score_text);
 
-      for (Button btn :choices)
+      for (Button btn : choices) {
         btn.setVisibility(View.GONE);
+      }
 
-      exit.setOnClickListener(v -> {
-        finish();
-      });
+      exit.setOnClickListener(v -> finish());
 
     } else {
       int n = qNum + 1;
       int percentage = (qNum * 100 / 5);
       String s = "Question: " + n;
       String score_text = "Score: " + score;
+
+      // Set top info
       questionNumber.setText(s);
       scoreViewer.setText(score_text);
       progressBar.setProgress(percentage);
-      currentQuestion.setText(getQuestion(qNum));
-      for (int i = 0; i < choices.length; i++) {
-        choices[i].setText(getChoice(qNum, i + 1));
+
+      // Set the current question
+      currentQuestion.setText(questions[qNum].getQuestion());
+
+      // Set the choices
+      int i = 0;
+      for (String q : questions[qNum].getChoices()) {
+        choices[i].setText(q);
+        i++;
       }
     }
   }
 
   public void clickHandler(View view) {
-    Button ref = findViewById(view.getId());
-    // record the answer
-    ans[this.qNum] = ref.getText().toString();
-    resetBtnColors();
-    ref.setBackgroundResource(R.drawable.white_fill_box);
-    ref.setTextColor(getResources().getColor(R.color.retro_blue));
+    if (questions[qNum].getType() < 2) {
+      // Single answer
+      Button ref = findViewById(view.getId());
+      // record the answer
+      ans[qNum] = ref.getText().toString();
+      resetBtnColors();
+      ref.setBackgroundResource(R.drawable.white_fill_box);
+      ref.setTextColor(getResources().getColor(R.color.retro_blue));
+    } else {
+      if (refs.size() < 2) {
+        refs.add(findViewById(view.getId()));
+      } else {
+        Button newBut = findViewById(view.getId());
+        if (!refs.contains(newBut)) { // check if it hasn't been clicked
+          refs.remove(); // pop the head off
+          refs.add(newBut);
+        }
+      }
+      // Actually set the colors
+      ans[qNum] = "";
+      resetBtnColors();
+      for (Button b : refs) {
+        b.setBackgroundResource(R.drawable.white_fill_box);
+        b.setTextColor(getResources().getColor(R.color.retro_blue));
+        ans[qNum] += b.getText().toString() + "//";
+      }
+
+    }
+
   }
 
   public void resetBtnColors() {

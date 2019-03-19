@@ -14,7 +14,7 @@ public class Helper {
         new String[]{"28", "32", "5"},
         new int[]{0}
     );
-    questions[2] = new Question("Who is Satoshi Nakamoto?",
+    questions[2] = new Question("Who is Satoshi Nakamoto? (multiple answers)",
         new String[]{"Creator of Bitcoin", "No one knows",
             "Someone who is really smart"},
         new int[]{0, 1}
